@@ -36,4 +36,6 @@ pytest -v
 1. Soraが用意した `LINE_CHANNEL_SECRET` / `LINE_CHANNEL_ACCESS_TOKEN` / `GEMINI_API_KEY` を Railway の環境変数に設定する
 2. GitHubリポジトリを作成しpush、RailwayでそのリポジトリからデプロイURLを発行する
 3. LINE DevelopersコンソールのWebhook URLに `{デプロイURL}/webhook` を設定し、Webhook利用をONにする
-4. Soraの個人LINEから、そのLINE公式アカウントに実際にメモを送り、テーマに沿った草稿が返ってくることを確認する
+4. LINE公式アカウントマネージャー（LINE Developersとは別コンソール）で「あいさつメッセージ」「自動応答メッセージ」をOFFにする（ONのままだとBotの返信より先にLINEの定型応答が返り、動作確認の妨げになる）
+5. Soraの個人LINEから、そのLINE公式アカウントに実際にメモを送り、テーマに沿った草稿が返ってくることを確認する
+6. 返信が来ない・おかしい場合は、Railwayのデプロイログを確認する（Gemini APIのモデル名やクレデンシャルの問題はログに出る）
