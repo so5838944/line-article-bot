@@ -1,4 +1,8 @@
-from gemini_client import load_knowledge
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from gemini_client import GeminiClient, load_knowledge
 
 
 def test_load_knowledge_concatenates_markdown_files(tmp_path):
@@ -13,13 +17,6 @@ def test_load_knowledge_concatenates_markdown_files(tmp_path):
     assert "not markdown" not in result
 
 
-from unittest.mock import MagicMock, patch
-
-import pytest
-
-from gemini_client import GeminiClient
-
-
 def test_generate_draft_returns_text():
     with patch("gemini_client.genai.Client") as mock_client_cls:
         mock_instance = MagicMock()
@@ -31,6 +28,9 @@ def test_generate_draft_returns_text():
 
         assert result == "生成された草稿"
         mock_instance.models.generate_content.assert_called_once()
+        _, call_kwargs = mock_instance.models.generate_content.call_args
+        assert call_kwargs["contents"] == "今日試したこと"
+        assert "型データ" in call_kwargs["config"].system_instruction
 
 
 def test_generate_draft_raises_on_empty_response():
