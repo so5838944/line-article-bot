@@ -1,8 +1,12 @@
+import logging
+
 from fastapi import FastAPI, HTTPException, Request
 
 from config import GEMINI_API_KEY, LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
 from gemini_client import GeminiClient, load_knowledge
 from line_client import reply_message, verify_signature
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 gemini_client = GeminiClient(api_key=GEMINI_API_KEY, knowledge=load_knowledge())
@@ -42,6 +46,7 @@ async def webhook(request: Request):
         try:
             draft = gemini_client.generate_draft(text)
         except Exception:
+            logger.exception("Gemini draft generation failed")
             reply_message(LINE_CHANNEL_ACCESS_TOKEN, reply_token, GENERATION_FAILED_REPLY)
             continue
 
