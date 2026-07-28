@@ -3,7 +3,10 @@ import hashlib
 import hmac
 from unittest.mock import MagicMock, patch
 
-from line_client import LINE_REPLY_URL, verify_signature
+import httpx
+import pytest
+
+from line_client import LINE_REPLY_URL, reply_message, verify_signature
 
 
 def _sign(secret: str, body: bytes) -> str:
@@ -26,9 +29,6 @@ def test_verify_signature_rejects_invalid_signature():
     assert verify_signature(secret, body, "not-a-valid-signature") is False
 
 
-from line_client import reply_message
-
-
 def test_reply_message_sends_correct_payload():
     with patch("line_client.httpx.post") as mock_post:
         mock_post.return_value = MagicMock(status_code=200)
@@ -41,3 +41,16 @@ def test_reply_message_sends_correct_payload():
         assert kwargs["headers"]["Authorization"] == "Bearer token123"
         assert kwargs["json"]["replyToken"] == "reply-token-abc"
         assert kwargs["json"]["messages"][0] == {"type": "text", "text": "こんにちは"}
+        mock_post.return_value.raise_for_status.assert_called_once()
+
+
+def test_reply_message_raises_on_http_error():
+    with patch("line_client.httpx.post") as mock_post:
+        error_response = MagicMock(status_code=500)
+        error_response.raise_for_status.side_effect = httpx.HTTPStatusError(
+            "server error", request=MagicMock(), response=error_response
+        )
+        mock_post.return_value = error_response
+
+        with pytest.raises(httpx.HTTPStatusError):
+            reply_message("token123", "reply-token-abc", "こんにちは")
