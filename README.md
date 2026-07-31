@@ -1,6 +1,8 @@
 # line-article-bot
 
-SoraがLINEに送ったメモを、X記事の型（`knowledge/テーマ別記事_型.md`）に沿ってGemini APIで整形し、LINEに返信するBot。
+SoraがLINEに送ったメモを、X記事の型（`knowledge/theme_templates.md`）に沿ってGemini APIで整形し、LINEに返信するBot。
+
+`knowledge/`配下のファイル名は英数字のみ（Cloud Runのコンテナビルドが日本語ファイル名で失敗するため）。
 
 ## ローカル実行
 
@@ -44,7 +46,7 @@ GitHubにpushしただけでは自動反映されない（Railwayと違いCloud 
 
 ## 属人性ファイルの更新
 
-`knowledge/属人性.md` の中身が確定したら、このファイルを上書きし、上記の `gcloud run deploy` を再実行する。
+`knowledge/persona.md` の中身が確定したら、このファイルを上書きし、上記の `gcloud run deploy` を再実行する。
 
 ## 実運用の確認手順（手動・要クレデンシャル）
 
