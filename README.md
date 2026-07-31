@@ -28,17 +28,21 @@ pytest -v
    gcloud auth login
    gcloud config set project <あなたのGCPプロジェクトID>
    ```
-2. このディレクトリからCloud Runにデプロイする（`Dockerfile` を自動検出してビルド・デプロイまで一括実行）
+2. 環境変数ファイルを用意する（このファイルはgitには含めない。値にカンマが含まれていても壊れないよう、`--set-env-vars`ではなくこの方式を使う）
+   ```bash
+   cp env-vars.example.yaml env-vars.yaml
+   # env-vars.yaml を開いて LINE_CHANNEL_SECRET / LINE_CHANNEL_ACCESS_TOKEN / GEMINI_API_KEY を実際の値に書き換える
+   ```
+3. このディレクトリからCloud Runにデプロイする（`Dockerfile` を自動検出してビルド・デプロイまで一括実行）
    ```bash
    gcloud run deploy line-article-bot \
      --source . \
      --region asia-northeast1 \
      --allow-unauthenticated \
-     --set-env-vars LINE_CHANNEL_SECRET=xxx,LINE_CHANNEL_ACCESS_TOKEN=xxx,GEMINI_API_KEY=xxx
+     --env-vars-file env-vars.yaml
    ```
-   （`xxx` の部分は実際の値に置き換える。環境変数は後からコンソール上でも変更できる）
-3. デプロイ完了後に表示されるURL（例: `https://line-article-bot-xxxxx.a.run.app`）+ `/webhook` を、LINE Developersコンソールの Webhook URL に設定する
-4. LINE Developersコンソールで「Webhookの利用」をONにする
+4. デプロイ完了後に表示されるURL（例: `https://line-article-bot-xxxxx.a.run.app`）+ `/webhook` を、LINE Developersコンソールの Webhook URL に設定する
+5. LINE Developersコンソールで「Webhookの利用」をONにする
 
 ### 再デプロイ（コード・型・ルールを更新したとき）
 
