@@ -32,7 +32,7 @@ class GeminiClient:
 
     def generate_draft(self, memo: str) -> str:
         response = self._client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-flash-latest",
             contents=memo,
             config=types.GenerateContentConfig(
                 system_instruction=self._system_instruction,
